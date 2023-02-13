@@ -32,6 +32,16 @@ impl<R: std::io::Read, W: std::io::Write> IO<R, W> {
     pub fn chars(&mut self) -> Vec<char> {
         self.read::<String>().chars().collect()
     }
+    pub fn char(&mut self) -> char {
+        use std::io::Read;
+        self
+        .0
+        .by_ref()
+        .bytes()
+        .next()
+        .unwrap()
+        .unwrap() as char
+    }
 }
 
 #[cfg(test)]
@@ -45,7 +55,8 @@ mod tests {
         abcde fghij
         
         3.14 -1592
-        no_empty_line";
+        no_empty_line
+        x";
         let mut sc = IO::new(&input[..], Vec::new());
 
         let n: usize = sc.read();
@@ -64,6 +75,9 @@ mod tests {
 
         let neg: i64 = sc.read();
         assert_eq!(neg, -1592);
+        
+        let single_char: char = sc.char();
+        assert_eq!(c, 'x');
 
         let s = sc.read::<String>();
         assert_eq!(&s, "no_empty_line");
